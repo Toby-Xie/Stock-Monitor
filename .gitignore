@@ -1,0 +1,9 @@
+# 大文件
+*.sql
+
+# Python
+__pycache__/
+*.pyc
+
+# 环境
+.env

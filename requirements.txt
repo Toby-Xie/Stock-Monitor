@@ -1,0 +1,7 @@
+fastapi
+uvicorn[standard]
+pandas
+akshare
+sqlalchemy
+psycopg2-binary
+openpyxl
