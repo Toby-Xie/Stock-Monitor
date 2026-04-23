@@ -1,0 +1,8 @@
+# SHELL=/bin/sh
+# PATH=/usr/local/bin:/usr/bin:/bin
+
+# * * * * * root cd /app && python jobs/update_valuation_daily.py >> /proc/1/fd/1 2>> /proc/1/fd/2
+
+SHELL=/bin/sh
+PATH=/usr/local/bin:/usr/bin:/bin
+* * * * * root /bin/sh -c 'echo "CRON OK" >> /tmp/cron_test.log 2>&1'

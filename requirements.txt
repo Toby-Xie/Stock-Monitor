@@ -5,3 +5,6 @@ akshare
 sqlalchemy
 psycopg2-binary
 openpyxl
+baostock
+APScheduler
+pytz

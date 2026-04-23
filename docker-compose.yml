@@ -9,6 +9,17 @@ services:
     depends_on:
       db:
         condition: service_healthy
+  scheduler:
+    build:
+      context: .
+      dockerfile: docker/scheduler/Dockerfile
+    container_name: stock-monitor-scheduler
+    environment:
+      DATABASE_URL: postgresql+psycopg2://postgres:123456@db:5432/stockdb
+      TZ: Asia/Shanghai
+    depends_on:
+      db:
+        condition: service_healthy
 
   db:
     image: postgres:16
