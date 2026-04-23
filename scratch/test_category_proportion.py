@@ -44,8 +44,8 @@ import time
 # stock_margin_detail_szse_df = ak.stock_margin_detail_szse(date="20260417")
 # print(stock_margin_detail_szse_df)
 
-stock_hsgt_fund_flow_summary_em_df = ak.stock_hsgt_fund_flow_summary_em()
-print(stock_hsgt_fund_flow_summary_em_df)
+# stock_hsgt_fund_flow_summary_em_df = ak.stock_hsgt_fund_flow_summary_em()
+# print(stock_hsgt_fund_flow_summary_em_df)
 
-# stock_hsgt_hist_em_df = ak.stock_hsgt_hist_em(symbol="北向资金") # choice =  {"北向资金", "沪股通", "深股通", "南向资金", "港股通沪", "港股通深"}
-# print(stock_hsgt_hist_em_df.tail(30))
+stock_hsgt_hist_em_df = ak.stock_hsgt_hist_em(symbol="北向资金") # choice =  {"北向资金", "沪股通", "深股通", "南向资金", "港股通沪", "港股通深"}
+print(stock_hsgt_hist_em_df.tail(100))
