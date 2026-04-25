@@ -5,7 +5,7 @@ from apscheduler.schedulers.blocking import BlockingScheduler
 from apscheduler.triggers.cron import CronTrigger
 
 from update_valuation_daily import run_daily_job
-
+from send_email_daily import send_email_job
 
 def job_wrapper():
     now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -29,6 +29,15 @@ if __name__ == "__main__":
         id="valuation_daily_job",
         replace_existing=True,
     )
+
+    # 邮件发送任务：每天 11:00
+    scheduler.add_job(
+        send_email_job,
+        trigger=CronTrigger(hour=11, minute=0),
+        id="send_email_daily_job",
+        replace_existing=True,
+    )
+    
     # scheduler.add_job(
     #     job_wrapper,
     #     trigger=CronTrigger(second=0),

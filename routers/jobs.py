@@ -1,8 +1,9 @@
 from fastapi import APIRouter, HTTPException, Query
 from sqlalchemy import text
+from typing import Optional
 
 from jobs.update_valuation_daily import engine, init_table, run_daily_job
-
+from jobs.send_email_daily import send_email_job
 router = APIRouter(prefix="/jobs", tags=["jobs"])
 
 
@@ -54,3 +55,11 @@ def get_valuation_job_status():
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"查询任务状态失败: {e}")
+
+@router.post("/email/send")
+def send_email_now():
+    try:
+        result = send_email_job()
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"邮件发送失败: {e}")

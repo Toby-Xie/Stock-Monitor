@@ -8,3 +8,5 @@ openpyxl
 baostock
 APScheduler
 pytz
+requests
+typing

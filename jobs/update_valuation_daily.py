@@ -1,6 +1,6 @@
 import os
 import time
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import Optional
 
 import baostock as bs
@@ -197,10 +197,21 @@ def fetch_and_save_market(
     finally:
         bs.logout()
 
+def get_last_trading_day(dt: datetime) -> datetime:
+    """
+    如果是周末：
+    - 周六 -> 周五
+    - 周日 -> 周五
+    """
+    if dt.weekday() == 5:  # Saturday
+        return dt - timedelta(days=1)
+    elif dt.weekday() == 6:  # Sunday
+        return dt - timedelta(days=2)
+    return dt
 
 def run_daily_job(force: bool = False, sleep_sec: float = 0.02) -> dict:
     now = datetime.now()
-    trade_date = now.strftime("%Y-%m-%d")
+    trade_date = get_last_trading_day(now).strftime("%Y-%m-%d")
     if not force and is_weekend(now):
         return {
             "status": "skipped",
@@ -221,7 +232,7 @@ def run_daily_job(force: bool = False, sleep_sec: float = 0.02) -> dict:
 
     fetch_and_save_market(
         trade_date=trade_date,
-        start_date=trade_date,
+        start_date="2026-04-21",
         end_date=trade_date,
         sleep_sec=sleep_sec,
     )
