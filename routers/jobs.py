@@ -5,6 +5,7 @@ from typing import Optional
 from jobs.update_valuation_daily import engine, init_table, run_daily_job
 from jobs.update_share_structure import init_table as init_share_table, update_share_structure
 from jobs.send_email_daily import send_email_job
+from jobs.update_market_pe_daily import init_table as init_market_pe_table, update_market_pe_daily
 router = APIRouter(prefix="/jobs", tags=["jobs"])
 
 
@@ -89,7 +90,17 @@ def get_share_structure_status():
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"查询股本结构状态失败: {e}")
-    
+
+@router.post("/market-pe/run")
+def run_market_pe_job(
+    start_date: Optional[str] = Query(None, description="开始日期 YYYY-MM-DD"),
+    end_date: Optional[str] = Query(None, description="结束日期 YYYY-MM-DD"),
+):
+    try:
+        return update_market_pe_daily(start_date=start_date, end_date=end_date)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"market PE 任务执行失败: {e}")
+
 @router.post("/email/send")
 def send_email_now():
     try:

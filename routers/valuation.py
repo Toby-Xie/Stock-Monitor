@@ -79,12 +79,12 @@ def calc_one_stock_latest_percentile(
         return None
 
     # 估值异常过滤
-    stock_df["pe_ttm"] = stock_df["pe_ttm"].where(
-        (stock_df["pe_ttm"] > 0) & (stock_df["pe_ttm"] < 200)
-    )
-    stock_df["pb_mrq"] = stock_df["pb_mrq"].where(
-        (stock_df["pb_mrq"] > 0) & (stock_df["pb_mrq"] < 50)
-    )
+    # stock_df["pe_ttm"] = stock_df["pe_ttm"].where(
+    #     (stock_df["pe_ttm"] > 0) & (stock_df["pe_ttm"] < 200)
+    # )
+    # stock_df["pb_mrq"] = stock_df["pb_mrq"].where(
+    #     (stock_df["pb_mrq"] > 0) & (stock_df["pb_mrq"] < 50)
+    # )
 
     pe_valid = stock_df["pe_ttm"].dropna()
     pb_valid = stock_df["pb_mrq"].dropna()

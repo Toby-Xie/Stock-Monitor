@@ -1,10 +1,15 @@
 import time
 import pandas as pd
 import akshare as ak
-from sqlalchemy import text
+from sqlalchemy import create_engine, text
+import os
 
-from db import engine
+PG_URL = os.getenv(
+    "DATABASE_URL",
+    "postgresql+psycopg2://postgres:123456@db:5432/stockdb"
+)
 
+engine = create_engine(PG_URL, pool_pre_ping=True)
 
 def init_table():
     ddl = """
@@ -29,6 +34,19 @@ def init_table():
             if s:
                 conn.execute(text(s))
 
+def is_a_share_stock_code(code: str) -> bool:
+    if not isinstance(code, str):
+        return False
+
+    if code.startswith("sh."):
+        raw = code[3:]
+        return raw.startswith(("600", "601", "603", "605", "688", "689"))
+
+    if code.startswith("sz."):
+        raw = code[3:]
+        return raw.startswith(("000", "001", "002", "003", "300"))
+
+    return False
 
 def baostock_code_to_ak_symbol(code: str) -> str:
     """
@@ -80,18 +98,18 @@ def fetch_one_share_structure(code: str) -> pd.DataFrame:
 
     if raw.empty:
         return pd.DataFrame()
-
-    date_col = pick_column(raw, ["变动日期", "公告日期", "日期"])
+    date_col = pick_column(raw, ["变更日期", "变动日期", "公告日期", "日期"])
 
     total_col = pick_column(raw, ["总股本", "总股本(股)", "总股本股", "总股本(万股)"])
-    circ_col = pick_column(raw, ["流通股本", "流通股本(股)", "流通股本股", "流通股本(万股)"])
-    rest_col = pick_column(raw, ["限售股本", "限售股本(股)", "限售股本股", "限售股本(万股)"])
 
+    circ_col = pick_column(raw, ["已流通股份", "已上市流通A股", "流通股本", "流通股本(股)", "流通股本股", "流通股本(万股)"])
+
+    rest_col = pick_column(raw, ["流通受限股份", "限售股本", "限售股本(股)", "限售股本股", "限售股本(万股)"])
     if date_col is None or total_col is None:
         print(f"{code} 字段无法识别, columns={list(raw.columns)}")
         return pd.DataFrame()
 
-    df = pd.DataFrame()
+    df = pd.DataFrame(index=raw.index)
     df["code"] = code
     df["change_date"] = pd.to_datetime(raw[date_col], errors="coerce").dt.date
     df["total_share"] = normalize_share_value(raw[total_col], total_col)
@@ -182,7 +200,8 @@ def get_stock_codes_from_valuation() -> list[str]:
     with engine.begin() as conn:
         rows = conn.execute(text(sql)).fetchall()
 
-    return [r[0] for r in rows]
+    codes = [r[0] for r in rows]
+    return [c for c in codes if is_a_share_stock_code(c)]
 
 
 def update_share_structure(sleep_sec: float = 0.2, batch_size: int = 100):

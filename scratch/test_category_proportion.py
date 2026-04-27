@@ -55,5 +55,5 @@ import time
 # print(df[['代码', '名称', '总市值', '流通市值']])
 
 #获取总股本数
-stock_zh_a_gbjg_em_df = ak.stock_zh_a_gbjg_em(symbol="603392.SH")
+stock_zh_a_gbjg_em_df = ak.stock_zh_a_gbjg_em(symbol="510650.SH")
 print(stock_zh_a_gbjg_em_df)
