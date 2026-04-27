@@ -47,5 +47,13 @@ import time
 # stock_hsgt_fund_flow_summary_em_df = ak.stock_hsgt_fund_flow_summary_em()
 # print(stock_hsgt_fund_flow_summary_em_df)
 
-stock_hsgt_hist_em_df = ak.stock_hsgt_hist_em(symbol="北向资金") # choice =  {"北向资金", "沪股通", "深股通", "南向资金", "港股通沪", "港股通深"}
-print(stock_hsgt_hist_em_df.tail(100))
+# stock_hsgt_hist_em_df = ak.stock_hsgt_hist_em(symbol="北向资金") # choice =  {"北向资金", "沪股通", "深股通", "南向资金", "港股通沪", "港股通深"}
+# print(stock_hsgt_hist_em_df.tail(100))
+
+
+# df = ak.stock_zh_a_spot_em()
+# print(df[['代码', '名称', '总市值', '流通市值']])
+
+#获取总股本数
+stock_zh_a_gbjg_em_df = ak.stock_zh_a_gbjg_em(symbol="603392.SH")
+print(stock_zh_a_gbjg_em_df)
