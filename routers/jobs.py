@@ -3,6 +3,7 @@ from sqlalchemy import text
 from typing import Optional
 
 from jobs.update_valuation_daily import engine, init_table, run_daily_job
+from jobs.update_share_structure import init_table as init_share_table, update_share_structure
 from jobs.send_email_daily import send_email_job
 router = APIRouter(prefix="/jobs", tags=["jobs"])
 
@@ -56,6 +57,39 @@ def get_valuation_job_status():
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"查询任务状态失败: {e}")
 
+@router.post("/share-structure/run")
+def run_share_structure_job(
+    sleep_sec: float = Query(0.2, ge=0, le=5, description="每只股票之间的间隔秒数"),
+    batch_size: int = Query(100, ge=1, le=1000, description="每批写入数量"),
+):
+    try:
+        result = update_share_structure(sleep_sec=sleep_sec, batch_size=batch_size)
+        return result or {"status": "ok", "message": "股本结构更新完成"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"股本结构任务执行失败: {e}")
+
+@router.get("/share-structure/status")
+def get_share_structure_status():
+    try:
+        init_share_table()
+        sql = text("""
+            SELECT
+                MAX(change_date) AS latest_change_date,
+                COUNT(*) AS total_rows,
+                COUNT(DISTINCT code) AS total_stocks
+            FROM stock_share_structure
+        """)
+        with engine.connect() as conn:
+            row = conn.execute(sql).fetchone()
+
+        return {
+            "latest_change_date": row[0].isoformat() if row and row[0] else None,
+            "total_rows": int(row[1] or 0) if row else 0,
+            "total_stocks": int(row[2] or 0) if row else 0,
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"查询股本结构状态失败: {e}")
+    
 @router.post("/email/send")
 def send_email_now():
     try:
