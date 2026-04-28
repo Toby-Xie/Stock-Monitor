@@ -1,13 +1,18 @@
 from datetime import date
 from io import BytesIO
 from typing import Optional
+import os
 
 import pandas as pd
 from fastapi import APIRouter, HTTPException, Query
 from fastapi.responses import StreamingResponse
-from sqlalchemy import text
+from sqlalchemy import create_engine, text
 
-from jobs.update_market_turn_daily import engine
+PG_URL = os.getenv(
+    "DATABASE_URL",
+    "postgresql+psycopg2://postgres:123456@db:5432/stockdb"
+)
+engine = create_engine(PG_URL, pool_pre_ping=True)
 
 
 router = APIRouter(prefix="/market-turn", tags=["market-turn"])
@@ -48,7 +53,7 @@ def query_market_turn(
     return df
 
 
-@router.get("")
+@router.get("/scan")
 def get_market_turn(
     start_date: Optional[date] = Query(None, description="开始日期 YYYY-MM-DD"),
     end_date: Optional[date] = Query(None, description="结束日期 YYYY-MM-DD"),
@@ -71,7 +76,7 @@ def get_market_turn(
         raise HTTPException(status_code=500, detail=f"查询 market turn 失败: {e}")
 
 
-@router.get("/export")
+@router.get("/scan/excel")
 def export_market_turn_excel(
     start_date: Optional[date] = Query(None, description="开始日期 YYYY-MM-DD"),
     end_date: Optional[date] = Query(None, description="结束日期 YYYY-MM-DD"),
