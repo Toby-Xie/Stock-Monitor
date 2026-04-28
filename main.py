@@ -22,7 +22,8 @@ def root():
         "docs": "/docs",
         "routes": [
             "/api/margin",
-            "/api/margin/excel",
+            "/api/margin/margin-detail",
+            "/api/margin/margin-detail/excel",
             "/api/valuation/scan",
             "/api/valuation/scan/excel",
             "/api/hsgt/daily-summary",
@@ -39,6 +40,8 @@ def root():
             "/api/jobs/share-structure/status",
             "/api/jobs/market-pe/run",
             "/api/jobs/market-turn/run",
+            "/api/jobs/margin/run",
             "/api/jobs/email/send",
+
         ],
     }
