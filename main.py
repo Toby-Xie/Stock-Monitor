@@ -6,6 +6,7 @@ from routers.market_pe import router as market_pe_router
 from routers.market_turn import router as market_turn_router
 from routers.industry_classification import router as industry_router
 from routers.industry_turnover import router as industry_turnover_router
+from routers.daily_report import router as daily_report_router
 from routers.jobs import router as jobs_router
 
 app = FastAPI(title="Stock Monitor API", version="1.0.0")
@@ -17,6 +18,7 @@ app.include_router(market_pe_router, prefix="/api")
 app.include_router(market_turn_router, prefix="/api")
 app.include_router(industry_router, prefix="/api")
 app.include_router(industry_turnover_router, prefix="/api")
+app.include_router(daily_report_router, prefix="/api")
 app.include_router(jobs_router, prefix="/api")
 
 @app.get("/")
@@ -41,6 +43,7 @@ def root():
             '/api/industry-classification/excel',
             '/api/industry-turnover/scan',
             '/api/industry-turnover/scan/excel',
+            '/api/daily-report/excel',
             "/api/jobs/health",
             "/api/jobs/valuation/run",
             "/api/jobs/valuation/status",
@@ -52,6 +55,7 @@ def root():
             "/api/jobs/email/send",
             "/api/jobs/industruy-classification/sw/run",
             "/api/jobs/industry-turnover/run",
+            "/api/jobs/daily-report/generate",
 
         ],
     }

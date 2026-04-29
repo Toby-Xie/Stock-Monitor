@@ -9,6 +9,7 @@ from jobs.update_market_pe_daily import init_table as init_market_pe_table, upda
 from jobs.update_market_turn_daily import init_table as init_market_turn_table, update_market_turn_daily
 from jobs.update_market_margin_daily import init_table as init_margin_table, update_market_margin_daily
 from jobs.update_sw_industry_classification import init_table as init_sw_table, update_sw_industry_classification
+from jobs.generate_daily_report import generate_daily_report
 from jobs.update_industry_turnover import update_industry_turnover
 
 router = APIRouter(prefix="/jobs", tags=["jobs"])
@@ -172,3 +173,11 @@ def send_email_now():
         return result
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"邮件发送失败: {e}")
+
+@router.post("/daily-report/generate")
+def generate_daily_report_now():
+    try:
+        result = generate_daily_report()
+        return result or {"status": "ok", "message": "日报生成完成"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"日报生成失败: {e}")
