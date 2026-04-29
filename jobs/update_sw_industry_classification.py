@@ -4,6 +4,7 @@ from datetime import date
 import pandas as pd
 import requests
 from sqlalchemy import create_engine, text
+import akshare as ak
 import os
 
 PG_URL = os.getenv(
@@ -118,12 +119,11 @@ def pick_stock_code_column(df: pd.DataFrame) -> str | None:
 
 
 def fetch_with_retry(index_code: str, max_retry: int = 5, sleep_sec: float = 2.0) -> pd.DataFrame:
-    import akshare as ak
 
     last_error = None
     for i in range(max_retry):
         try:
-            df = ak.index_component_sw(index_code=index_code)
+            df = ak.index_component_sw(symbol=index_code)
             if df is not None and not df.empty:
                 return df
             last_error = RuntimeError(f"empty result for {index_code}")

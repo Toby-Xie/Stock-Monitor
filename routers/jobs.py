@@ -8,6 +8,7 @@ from jobs.send_email_daily import send_email_job
 from jobs.update_market_pe_daily import init_table as init_market_pe_table, update_market_pe_daily
 from jobs.update_market_turn_daily import init_table as init_market_turn_table, update_market_turn_daily
 from jobs.update_market_margin_daily import init_table as init_margin_table, update_market_margin_daily
+from jobs.update_sw_industry_classification import init_table as init_sw_table, update_sw_industry_classification
 router = APIRouter(prefix="/jobs", tags=["jobs"])
 
 
@@ -123,6 +124,13 @@ def run_margin_job(
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"margin 任务执行失败: {e}")
     
+@router.post("/industruy-classification/sw/run")
+def run_sw_industry_classification_job():
+    try:
+        result = update_sw_industry_classification()
+        return result or {"status": "ok", "message": "SW 行业分类更新完成"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"SW 行业分类任务执行失败: {e}")
 @router.post("/email/send")
 def send_email_now():
     try:

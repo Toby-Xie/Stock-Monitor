@@ -42,6 +42,7 @@ def root():
             "/api/jobs/market-turn/run",
             "/api/jobs/margin/run",
             "/api/jobs/email/send",
+            "/api/jobs/industruy-classification/sw/run",
 
         ],
     }

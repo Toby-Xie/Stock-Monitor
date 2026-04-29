@@ -58,5 +58,7 @@ import time
 # stock_zh_a_gbjg_em_df = ak.stock_zh_a_gbjg_em(symbol="510650.SH")
 # print(stock_zh_a_gbjg_em_df)
 
-stock_board_industry_name_em_df = ak.stock_board_industry_name_em()
-print(stock_board_industry_name_em_df)
+# stock_board_industry_name_em_df = ak.stock_board_industry_name_em()
+# print(stock_board_industry_name_em_df)
+index_component_sw_df = ak.index_component_sw(symbol="801001")
+print(index_component_sw_df)
