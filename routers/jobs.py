@@ -9,6 +9,8 @@ from jobs.update_market_pe_daily import init_table as init_market_pe_table, upda
 from jobs.update_market_turn_daily import init_table as init_market_turn_table, update_market_turn_daily
 from jobs.update_market_margin_daily import init_table as init_margin_table, update_market_margin_daily
 from jobs.update_sw_industry_classification import init_table as init_sw_table, update_sw_industry_classification
+from jobs.update_industry_turnover import update_industry_turnover
+
 router = APIRouter(prefix="/jobs", tags=["jobs"])
 
 
@@ -24,15 +26,35 @@ def jobs_health():
 
 @router.post("/valuation/run")
 def run_valuation_job(
-    force: bool = Query(False, description="是否强制运行，true 时周末和已存在数据也继续执行"),
-    sleep_sec: float = Query(0.02, ge=0, le=5, description="每只股票之间的间隔秒数"),
+    start_date: Optional[str] = Query(
+        None,
+        description="开始日期 YYYY-MM-DD；不传则默认使用最近交易日"
+    ),
+    end_date: Optional[str] = Query(
+        None,
+        description="结束日期 YYYY-MM-DD；不传则默认使用最近交易日"
+    ),
+    force: bool = Query(
+        False,
+        description="是否强制运行，true 时周末和已存在数据也继续执行"
+    ),
+    sleep_sec: float = Query(
+        0.02,
+        ge=0,
+        le=5,
+        description="每只股票之间的间隔秒数"
+    ),
 ):
     try:
-        result = run_daily_job(force=force, sleep_sec=sleep_sec)
+        result = run_daily_job(
+            start_date=start_date,
+            end_date=end_date,
+            force=force,
+            sleep_sec=sleep_sec,
+        )
         return result
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"任务执行失败: {e}")
-
 
 @router.get("/valuation/status")
 def get_valuation_job_status():
@@ -131,6 +153,18 @@ def run_sw_industry_classification_job():
         return result or {"status": "ok", "message": "SW 行业分类更新完成"}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"SW 行业分类任务执行失败: {e}")
+
+@router.post("/industry-turnover/run")
+def run_industry_turnover_job(
+    start_date: Optional[str] = Query(None, description="开始日期 YYYY-MM-DD"),
+    end_date: Optional[str] = Query(None, description="结束日期 YYYY-MM-DD"),
+):
+    try:
+        result = update_industry_turnover(start_date=start_date, end_date=end_date)
+        return result or {"status": "ok", "message": "行业成交额占比更新完成"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"行业成交额占比任务执行失败: {e}")
+    
 @router.post("/email/send")
 def send_email_now():
     try:
