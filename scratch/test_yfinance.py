@@ -1,171 +1,85 @@
-# scratch/test_ca_yfinance.py
+# scratch/test_xqq_full_history.py
 
 import pandas as pd
 import yfinance as yf
 
 
-SYMBOLS = [
-    "RY.TO",    # Royal Bank of Canada
-    "TD.TO",    # Toronto-Dominion Bank
-    "SHOP.TO",  # Shopify Canada listing
-    "ENB.TO",   # Enbridge
-    "CNQ.TO",   # Canadian Natural Resources
-    "AAPL",     # control sample
-]
+SYMBOL = "XQQ.TO"
 
 
-def safe_float(x):
-    try:
-        if x is None or pd.isna(x):
-            return None
-        return float(x)
-    except Exception:
-        return None
+def main():
+    print(f"Downloading full history for {SYMBOL} ...")
 
+    ticker = yf.Ticker(SYMBOL)
 
-def inspect_symbol(symbol: str):
-    print("=" * 100)
-    print(f"SYMBOL: {symbol}")
+    # 获取全部历史数据
+    hist = ticker.history(
+        period="max",
+        auto_adjust=False
+    )
 
-    ticker = yf.Ticker(symbol)
+    if hist.empty:
+        print("No history data found.")
+        return
 
-    # 1) Price history
-    hist = ticker.history(period="2y", auto_adjust=False)
+    # 时间处理
+    hist.index = pd.to_datetime(hist.index).tz_localize(None)
+    hist = hist.sort_index()
 
-    print("\n[history]")
-    print("empty:", hist.empty)
-    print("shape:", hist.shape)
-    print("columns:", list(hist.columns))
+    # 添加技术指标
+    hist["MA20"] = hist["Close"].rolling(20).mean()
+    hist["MA60"] = hist["Close"].rolling(60).mean()
 
-    if not hist.empty:
-        hist.index = pd.to_datetime(hist.index).tz_localize(None)
-        hist = hist.sort_index()
+    # 52周高低
+    hist["52W_High"] = hist["Close"].rolling(252).max()
+    hist["52W_Low"] = hist["Close"].rolling(252).min()
 
-        print("date range:", hist.index.min(), "->", hist.index.max())
-        print(hist.tail(3)[['Open', 'High', 'Low', 'Close', 'Adj Close', 'Volume', 'Dividends', 'Stock Splits']])
+    # 52周位置
+    hist["Position_52W"] = (
+        (hist["Close"] - hist["52W_Low"])
+        / (hist["52W_High"] - hist["52W_Low"])
+    )
 
-        close = safe_float(hist["Close"].iloc[-1])
-        ma20 = safe_float(hist["Close"].rolling(20).mean().iloc[-1])
-        ma60 = safe_float(hist["Close"].rolling(60).mean().iloc[-1])
-        high_52w = safe_float(hist["Close"].tail(252).max())
-        low_52w = safe_float(hist["Close"].tail(252).min())
+    # 增加 symbol 列
+    hist["Symbol"] = SYMBOL
 
-        position_52w = None
-        if close is not None and high_52w is not None and low_52w is not None and high_52w != low_52w:
-            position_52w = (close - low_52w) / (high_52w - low_52w)
+    # index 转列
+    hist = hist.reset_index()
 
-        print("\n[derived price metrics]")
-        print("close:", close)
-        print("ma20:", ma20)
-        print("ma60:", ma60)
-        print("high_52w:", high_52w)
-        print("low_52w:", low_52w)
-        print("position_52w:", position_52w)
-
-    # 2) Quarterly income statement
-    print("\n[quarterly_income_stmt]")
-    income = ticker.quarterly_income_stmt
-
-    print("empty:", income.empty)
-    print("shape:", income.shape)
-
-    if not income.empty:
-        print("index sample:", list(income.index[:20]))
-        print("columns:", list(income.columns[:8]))
-
-        income_t = income.T
-        income_t.index = pd.to_datetime(income_t.index).tz_localize(None)
-        income_t = income_t.sort_index()
-
-        net_income_candidates = [
-            "Net Income Common Stockholders",
-            "Net Income",
-            "Net Income From Continuing Operation Net Minority Interest",
-        ]
-
-        net_income_col = next((c for c in net_income_candidates if c in income_t.columns), None)
-        print("net_income_col:", net_income_col)
-
-        if net_income_col:
-            print(income_t[[net_income_col]].tail(6))
-
-    # 3) Info fields
-    print("\n[info]")
-    info = ticker.info or {}
-
-    interesting_keys = [
-        "symbol",
-        "shortName",
-        "currency",
-        "exchange",
-        "market",
-        "regularMarketPrice",
-        "currentPrice",
-        "previousClose",
-        "sharesOutstanding",
-        "trailingEps",
-        "trailingPE",
-        "forwardPE",
-        "dividendYield",
+    # 列顺序
+    columns = [
+        "Date",
+        "Symbol",
+        "Open",
+        "High",
+        "Low",
+        "Close",
+        "Adj Close",
+        "Volume",
+        "Dividends",
+        "Stock Splits",
+        "MA20",
+        "MA60",
+        "52W_High",
+        "52W_Low",
+        "Position_52W",
     ]
 
-    for key in interesting_keys:
-        print(f"{key}: {info.get(key)}")
+    hist = hist[columns]
 
-    # 4) Our PE_TTM calculation
-    print("\n[calculated PE_TTM]")
-    try:
-        if hist.empty or income.empty:
-            print("PE_TTM: None, missing hist or income")
-            return
+    # 保存 CSV
+    output_file = "/Users/wentaoxie/Stock-Monitor/scratch/xqq_full_history.csv"
 
-        close = safe_float(hist["Close"].iloc[-1])
-        income_t = income.T
-        income_t.index = pd.to_datetime(income_t.index).tz_localize(None)
-        income_t = income_t.sort_index()
+    hist.to_csv(
+        output_file,
+        index=False,
+        encoding="utf-8-sig"
+    )
 
-        net_income_col = None
-        for c in [
-            "Net Income Common Stockholders",
-            "Net Income",
-            "Net Income From Continuing Operation Net Minority Interest",
-        ]:
-            if c in income_t.columns:
-                net_income_col = c
-                break
-
-        shares = info.get("sharesOutstanding")
-
-        print("close used:", close)
-        print("sharesOutstanding used:", shares)
-        print("net_income_col used:", net_income_col)
-
-        if not close or not shares or not net_income_col:
-            print("PE_TTM: None, missing close/shares/net income col")
-            return
-
-        income_t["NetIncome"] = pd.to_numeric(income_t[net_income_col], errors="coerce")
-        income_t["EPS"] = income_t["NetIncome"] / shares
-        income_t["TTM_EPS"] = income_t["EPS"].rolling(4).sum()
-
-        latest_ttm_eps = income_t["TTM_EPS"].dropna().iloc[-1] if not income_t["TTM_EPS"].dropna().empty else None
-        pe_ttm = close / latest_ttm_eps if latest_ttm_eps else None
-
-        print(income_t[[net_income_col, "EPS", "TTM_EPS"]].tail(6))
-        print("latest_ttm_eps:", latest_ttm_eps)
-        print("calculated PE_TTM:", pe_ttm)
-        print("yfinance trailingPE:", info.get("trailingPE"))
-        print("yfinance trailingEps:", info.get("trailingEps"))
-
-    except Exception as e:
-        print("PE_TTM calculation failed:", repr(e))
+    print(f"\nSaved full history to: {output_file}")
+    print("\nLast 5 rows:")
+    print(hist.tail())
 
 
 if __name__ == "__main__":
-    for symbol in SYMBOLS:
-        try:
-            inspect_symbol(symbol)
-        except Exception as e:
-            print("=" * 100)
-            print(f"SYMBOL: {symbol}")
-            print("FAILED:", repr(e))
+    main()
