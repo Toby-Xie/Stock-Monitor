@@ -134,23 +134,28 @@ for start in range(0, len(model_df) - TRAIN_WINDOW - TEST_WINDOW, TEST_WINDOW):
 
 bt = pd.concat(all_results).reset_index(drop=True)
 
-# 昨天收盘 -> 今天开盘的跳空收益
+# =========================
+# 6. BACKTEST - open execution, correct overnight/intraday handling
+# =========================
+
+bt = pd.concat(all_results).reset_index(drop=True)
+
 bt["Overnight_Return"] = bt["Open"] / bt["Close"].shift(1) - 1
-
-# 今天开盘 -> 今天收盘的日内收益
 bt["Intraday_Return"] = bt["Close"] / bt["Open"] - 1
-
-# Buy & Hold: 昨收 -> 今收
 bt["Market_Return"] = bt["Close"].pct_change()
 
-# 昨天信号，今天开盘执行
-bt["Executed_Position"] = bt["Position"].shift(1)
+# 昨天收盘 -> 今天开盘：
+# 昨天收盘时已经持有，才吃隔夜收益
+bt["Overnight_Position"] = bt["Position"].shift(1)
 
-# 策略收益：今天开盘买入，持有到今天收盘
-bt["Strategy_Return"] = bt["Executed_Position"] * bt["Intraday_Return"]
+# 今天开盘 -> 今天收盘：
+# 今天开盘执行今天目标仓位
+bt["Intraday_Position"] = bt["Position"]
 
-# 可选：如果你想包含隔夜风险，用这个替代上面一行
-# bt["Strategy_Return"] = bt["Executed_Position"] * bt["Market_Return"]
+bt["Strategy_Return"] = (
+    bt["Overnight_Position"] * bt["Overnight_Return"]
+    + bt["Intraday_Position"] * bt["Intraday_Return"]
+)
 
 bt["Cumulative_Market"] = (1 + bt["Market_Return"]).cumprod()
 bt["Cumulative_Strategy"] = (1 + bt["Strategy_Return"]).cumprod()
