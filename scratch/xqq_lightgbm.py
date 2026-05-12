@@ -11,7 +11,7 @@ from sklearn.metrics import classification_report
 # 1. LOAD DATA
 # =========================
 
-df = pd.read_csv("./xqq_full_history_with_vix_spy_tnx_irx.csv")
+df = pd.read_csv("./xqq_full_history_macro.csv")
 
 df["Date"] = pd.to_datetime(df["Date"])
 df = df.sort_values("Date").reset_index(drop=True)
@@ -31,20 +31,29 @@ df["Future_Return_30D"] = df["Close"].shift(-30) / df["Close"] - 1
 df["MA20"] = df["Close"].rolling(20).mean()
 df["MA60"] = df["Close"].rolling(60).mean()
 df["MA120"] = df["Close"].rolling(120).mean()
+df["EWMA120"] = df["Close"].ewm(span=120,adjust=False).mean()
 
 df["Price_vs_MA20"] = df["Close"] / df["MA20"]
 df["Price_vs_MA60"] = df["Close"] / df["MA60"]
 df["Price_vs_MA120"] = df["Close"] / df["MA120"]
+df["Price_vs_EWMA120"] = df["Close"] / df["EWMA120"]
 
 df["Volatility_20"] = df["Return_1D"].rolling(20).std()
+df["Volatility_60"] = df["Return_1D"].rolling(60).std()
+df["Volatility_Regime"] = df["Volatility_20"] / df["Volatility_60"]
 
 df["VIX_MA20"] = df["VIX"].rolling(20).mean()
+df["VIX_MA60"] = df["VIX"].rolling(60).mean()
+df["VIX_MA120"] = df["VIX"].rolling(120).mean()
+df["VIX_Regime"] = df["VIX_MA20"] / df["VIX_MA60"]
 df["VIX_Zscore"] = df["VIX_Zscore"]
 
 df["SPY_Trend"] = df["SPY_Trend"]
 df["TNX_Change"] = df["TNX_Change"]
 
 df["Yield_Spread"] = df["TNX"] - df["IRX"]
+df["HYG_IEF_Ratio"] = df["HYG_IEF_Ratio"]
+df["DXY_Trend"] = df["DXY_Trend"]
 
 # =========================
 # 3. TARGET
@@ -53,8 +62,19 @@ df["Yield_Spread"] = df["TNX"] - df["IRX"]
 df["Rolling_Mean"] = df["Future_Return_30D"].rolling(252).mean()
 
 df["Target"] = np.nan
-df.loc[df["Future_Return_30D"] > df["Rolling_Mean"], "Target"] = 1
-df.loc[df["Future_Return_30D"] <= df["Rolling_Mean"], "Target"] = 0
+df["Target"] = np.nan
+
+df.loc[
+    (df["Future_Return_30D"] > 0) |
+    (df["Future_Return_30D"] > df["Rolling_Mean"]),
+    "Target"
+] = 1
+
+df.loc[
+    (df["Future_Return_30D"] <= 0) &
+    (df["Future_Return_30D"] <= df["Rolling_Mean"]),
+    "Target"
+] = 0
 
 
 # =========================
@@ -64,10 +84,15 @@ df.loc[df["Future_Return_30D"] <= df["Rolling_Mean"], "Target"] = 0
 features = [
     "Price_vs_MA120",
     "Volatility_20",
+    # "Volatility_Regime",
+    # "Volatility_60",
     "VIX_MA20",
+    "VIX_MA60",
     "SPY_Trend",
     "TNX_Change",
     "Yield_Spread",
+    "HYG_IEF_Ratio",
+    "DXY_Trend",
 ]
 
 model_df = df.dropna(
@@ -98,6 +123,9 @@ for start in range(0, len(model_df) - TRAIN_WINDOW - TEST_WINDOW, TEST_WINDOW):
     y_test = test_df["Target"]
 
     model = LGBMClassifier(
+        class_weight={
+        0: 2,
+        1: 1},
         n_estimators=300,
         learning_rate=0.03,
         max_depth=3,
@@ -144,19 +172,23 @@ bt["Overnight_Return"] = bt["Open"] / bt["Close"].shift(1) - 1
 bt["Intraday_Return"] = bt["Close"] / bt["Open"] - 1
 bt["Market_Return"] = bt["Close"].pct_change()
 
-# 昨天收盘 -> 今天开盘：
-# 昨天收盘时已经持有，才吃隔夜收益
-bt["Overnight_Position"] = bt["Position"].shift(1)
+# Close[t-1] -> Open[t]
 
-# 今天开盘 -> 今天收盘：
-# 今天开盘执行今天目标仓位
-bt["Intraday_Position"] = bt["Position"]
+# 这段隔夜仓位来自更早一天已经执行过的仓位
 
+bt["Overnight_Position"] = bt["Position"].shift(2)
+
+# Open[t] -> Close[t]
+
+# 今天开盘执行昨天收盘信号
+
+bt["Intraday_Position"] = bt["Position"].shift(1)
+bt["Overnight_Position"] = bt["Overnight_Position"].fillna(0)
+bt["Intraday_Position"] = bt["Intraday_Position"].fillna(0)
 bt["Strategy_Return"] = (
     bt["Overnight_Position"] * bt["Overnight_Return"]
     + bt["Intraday_Position"] * bt["Intraday_Return"]
 )
-
 bt["Cumulative_Market"] = (1 + bt["Market_Return"]).cumprod()
 bt["Cumulative_Strategy"] = (1 + bt["Strategy_Return"]).cumprod()
 
@@ -272,11 +304,11 @@ bt[output_cols].to_csv(
 print("\nSaved rolling results to: ./xqq_lgbm_rolling_results.csv")
 
 # =========================
-# 10. LIVE PREDICTION（最后30天）
+# 10. LIVE PREDICTION（最后60天）
 # =========================
 
 live_df = df.dropna(subset=features).copy()
-live_df = live_df.tail(30).copy().reset_index(drop=True)
+live_df = live_df.tail(60).copy().reset_index(drop=True)
 
 live_df["Up_Probability"] = model.predict_proba(live_df[features])[:, 1]
 
@@ -299,7 +331,7 @@ live_df[live_output_cols].to_csv(
     encoding="utf-8-sig"
 )
 
-print("\n=== Last 30 Days Live Predictions ===")
-print(live_df[live_output_cols].tail(30))
+# print("\n=== Last 30 Days Live Predictions ===")
+# print(live_df[live_output_cols].tail(60))
 
-print(f"\nSaved live predictions to: {live_output_file}")
+# print(f"\nSaved live predictions to: {live_output_file}")
