@@ -55,6 +55,9 @@ df["Yield_Spread"] = df["TNX"] - df["IRX"]
 df["HYG_IEF_Ratio"] = df["HYG_IEF_Ratio"]
 df["DXY_Trend"] = df["DXY_Trend"]
 
+df["Core_CPI_mm_Surprise"] = df["CPI_Surprise_Mean_Last"]
+df["Core_PPI_mm_Surprise"] = df["PPI_Surprise_Mean_Last"]
+
 # =========================
 # 3. TARGET
 # =========================

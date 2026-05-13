@@ -1,0 +1,98 @@
+﻿Day,Time,Currency,Impact,Event,Actual,Forecast,Previous
+20260503,9:00pm,AUD,1,MI Inflation Gauge m/m,0.6%,,1.3%
+20260503,9:30pm,AUD,1,ANZ Job Advertisements m/m,-0.8%,,-3.2%
+20260503,9:30pm,AUD,1,Building Approvals m/m,-10.5%,-10.2%,31.0%
+20260504,3:15am,EUR,1,Spanish Manufacturing PMI,51.7,49.5,48.7
+20260504,3:30am,CHF,1,Manufacturing PMI,54.5,52.0,53.3
+20260504,3:45am,EUR,1,Italian Manufacturing PMI,52.1,51.6,51.3
+20260504,3:50am,EUR,1,French Final Manufacturing PMI,52.8,52.8,52.8
+20260504,3:55am,EUR,1,German Final Manufacturing PMI,51.4,51.2,51.2
+20260504,4:00am,EUR,1,Final Manufacturing PMI,52.2,52.2,52.2
+20260504,4:30am,EUR,1,Sentix Investor Confidence,-16.4,-20.9,-19.2
+20260504,All Day,EUR,1,Eurogroup Meetings,,,
+20260504,10:00am,USD,1,Factory Orders m/m,1.5%,0.5%,0.3%
+20260504,12:50pm,USD,1,FOMC Member Williams Speaks,,,
+20260504,1:05pm,EUR,1,German Buba President Nagel Speaks,,,
+20260504,2:00pm,USD,1,Loan Officer Survey,,,
+20260504,9:00pm,NZD,1,ANZ Commodity Prices m/m,-0.8%,,4.2%
+20260504,9:30pm,AUD,1,Household Spending m/m,1.6%,1.8%,0.3%
+20260505,12:30am,AUD,3,Cash Rate,4.35%,4.35%,4.10%
+20260505,12:30am,AUD,3,RBA Monetary Policy Statement,,,
+20260505,12:30am,AUD,3,RBA Rate Statement,,,
+20260505,1:30am,AUD,3,RBA Press Conference,,,
+20260505,3:00am,EUR,1,Spanish Unemployment Change,-62.7K,-18.6K,-22.9K
+20260505,All Day,EUR,1,ECOFIN Meetings,,,
+20260505,8:30am,CAD,1,Trade Balance,1.8B,-2.4B,-5.1B
+20260505,8:30am,USD,1,Trade Balance,-60.3B,-61.0B,-57.8B
+20260505,9:31am,EUR,1,French Gov Budget Balance,-42.9B,,-32.1B
+20260505,9:45am,USD,1,Final Services PMI,51.0,51.3,51.3
+20260505,10:00am,USD,3,ISM Services PMI,53.6,53.7,54.0
+20260505,10:00am,USD,3,JOLTS Job Openings,6.87M,6.86M,6.92M
+20260505,10:00am,USD,1,FOMC Member Bowman Speaks,,,
+20260505,10:03am,USD,1,RCM/TIPP Economic Optimism,42.6,42.0,42.8
+20260505,11:37am,NZD,1,GDT Price Index,1.5%,,-2.7%
+20260505,12:30pm,USD,1,FOMC Member Barr Speaks,,,
+20260505,4:30pm,USD,1,API Weekly Statistical Bulletin,,,
+20260505,5:00pm,NZD,1,RBNZ Financial Stability Report,,,
+20260505,6:45pm,NZD,3,Employment Change q/q,0.2%,0.3%,0.5%
+20260505,6:45pm,NZD,3,Unemployment Rate,5.3%,5.4%,5.4%
+20260505,6:45pm,NZD,1,Labor Cost Index q/q,0.5%,0.4%,0.4%
+20260505,9:45pm,CNY,1,RatingDog Services PMI,52.6,52.0,52.1
+20260506,2:45am,EUR,1,French Industrial Production m/m,1.0%,0.5%,-0.9%
+20260506,3:15am,EUR,1,Spanish Services PMI,47.9,51.9,53.3
+20260506,3:45am,EUR,1,Italian Services PMI,49.8,47.9,48.8
+20260506,3:50am,EUR,1,French Final Services PMI,46.5,46.5,46.5
+20260506,3:55am,EUR,1,German Final Services PMI,46.9,46.9,46.9
+20260506,4:00am,EUR,1,Final Services PMI,47.6,47.4,47.4
+20260506,4:00am,EUR,1,Italian Retail Sales m/m,0.8%,-0.4%,-0.1%
+20260506,4:30am,GBP,1,Final Services PMI,52.7,51.9,52.0
+20260506,5:00am,EUR,1,PPI m/m,3.4%,3.3%,-0.6%
+20260506,9:30am,USD,1,FOMC Member Musalem Speaks,,,
+20260506,10:30am,USD,1,Crude Oil Inventories,-2.3M,-3.4M,-6.2M
+20260506,1:00pm,USD,1,FOMC Member Goolsbee Speaks,,,
+20260506,7:50pm,JPY,1,Monetary Base y/y,-11.3%,-10.5%,-11.6%
+20260506,7:50pm,JPY,1,Monetary Policy Meeting Minutes,,,
+20260506,9:30pm,AUD,1,Goods Trade Balance,-1.84B,4.38B,5.03B
+20260507,2:00am,EUR,1,German Factory Orders m/m,5.0%,1.0%,1.4%
+20260507,2:45am,EUR,1,French Trade Balance,-6.9B,-6.7B,-5.5B
+20260507,3:00am,CHF,1,Foreign Currency Reserves,716B,,721B
+20260507,3:00am,CHF,1,Unemployment Rate,3.0%,3.0%,3.0%
+20260507,4:00am,GBP,1,MPC Member Lombardelli Speaks,,,
+20260507,4:30am,GBP,1,Construction PMI,39.7,45.8,45.6
+20260507,4:46am,EUR,1,Spanish 10-y Bond Auction,3.39|2.1,,3.44|2.0
+20260507,4:57am,EUR,1,French 10-y Bond Auction,3.61|2.0,,3.73|1.9
+20260507,5:00am,EUR,1,Retail Sales m/m,-0.1%,-0.3%,-0.3%
+20260507,5:30am,USD,1,Challenger Job Cuts y/y,-20.9%,,-78.0%
+20260507,8:30am,USD,1,Prelim Nonfarm Productivity q/q,0.8%,0.7%,1.8%
+20260507,8:30am,USD,1,Prelim Unit Labor Costs q/q,2.3%,2.6%,4.4%
+20260507,8:40am,GBP,1,MPC Member Taylor Speaks,,,
+20260507,Feb Data,USD,1,Construction Spending m/m,-0.2%,,-1.9%
+20260507,10:00am,USD,1,Construction Spending m/m,0.6%,0.3%,-0.2%
+20260507,10:30am,USD,1,Natural Gas Storage,63B,72B,79B
+20260507,1:00pm,USD,1,FOMC Member Kashkari Speaks,,,
+20260507,2:05pm,USD,1,FOMC Member Hammack Speaks,,,
+20260507,3:00pm,USD,1,Consumer Credit m/m,24.9B,12.5B,8.8B
+20260507,3:30pm,USD,1,FOMC Member Williams Speaks,,,
+20260507,7:30pm,JPY,1,Average Cash Earnings y/y,2.7%,3.2%,3.4%
+20260508,2:00am,EUR,1,German Industrial Production m/m,-0.7%,0.4%,-0.5%
+20260508,2:00am,EUR,1,German Trade Balance,14.3B,17.8B,19.6B
+20260508,2:00am,GBP,1,Halifax HPI m/m,-0.1%,0.0%,-0.5%
+20260508,3:00am,CHF,1,SECO Consumer Climate,-40,-46,-43
+20260508,5:45am,USD,1,FOMC Member Cook Speaks,,,
+20260508,8:20am,GBP,3,BOE Gov Bailey Speaks,,,
+20260508,8:30am,CAD,3,Employment Change,-17.7K,12.9K,14.1K
+20260508,8:30am,CAD,3,Unemployment Rate,6.9%,6.7%,6.7%
+20260508,8:30am,USD,3,Average Hourly Earnings m/m,0.2%,0.3%,0.2%
+20260508,8:30am,USD,3,Non-Farm Employment Change,115K,65K,185K
+20260508,8:30am,USD,3,Unemployment Rate,4.3%,4.3%,4.3%
+20260508,10:00am,USD,1,Final Wholesale Inventories m/m,1.3%,1.4%,1.4%
+20260508,11:05am,USD,1,FOMC Member Goolsbee Speaks,,,
+20260508,12:15pm,EUR,1,German Buba President Nagel Speaks,,,
+20260508,2:20pm,USD,1,FOMC Member Goolsbee Speaks,,,
+20260508,4:00pm,USD,1,FOMC Financial Stability Report,,,
+20260508,7:30pm,USD,1,FOMC Member Bowman Speaks,,,
+20260508,7:30pm,USD,1,FOMC Member Daly Speaks,,,
+20260508,7:30pm,USD,1,FOMC Member Goolsbee Speaks,,,
+20260508,7:30pm,USD,1,FOMC Member Waller Speaks,,,
+20260508,10:42pm,CNY,1,USD-Denominated Trade Balance,84.8B,83.1B,51.1B
+20260508,10:43pm,CNY,1,Trade Balance,586B,575B,355B
